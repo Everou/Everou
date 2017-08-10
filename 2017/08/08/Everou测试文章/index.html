@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="撸代码吧" />
+  <meta name="keywords" content="读书笔记," />
 
 
 
@@ -95,13 +95,14 @@
 
 
 <meta name="description" content="使用静态工厂方法代替类的构造器使用静态工厂方法的好处： 1. 有直观的方法名，有方法名更为直观的反馈该方法的作用。 2. 可以复用对象，减少开支。比如单例模式。 3. 可以返回该类的任意子类。这是服务提供者框架的基础 这里展示一个服务提供者框架的Demo:    1234567891011121314151617181920212223242526272829303132333435363738/">
+<meta name="keywords" content="读书笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Effective Java读书笔记（一）">
 <meta property="og:url" content="https://everou.github.io/2017/08/08/Everou测试文章/index.html">
 <meta property="og:site_name" content="Everou Blog">
 <meta property="og:description" content="使用静态工厂方法代替类的构造器使用静态工厂方法的好处： 1. 有直观的方法名，有方法名更为直观的反馈该方法的作用。 2. 可以复用对象，减少开支。比如单例模式。 3. 可以返回该类的任意子类。这是服务提供者框架的基础 这里展示一个服务提供者框架的Demo:    1234567891011121314151617181920212223242526272829303132333435363738/">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-08-09T06:28:19.124Z">
+<meta property="og:updated_time" content="2017-08-10T10:18:51.300Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Effective Java读书笔记（一）">
 <meta name="twitter:description" content="使用静态工厂方法代替类的构造器使用静态工厂方法的好处： 1. 有直观的方法名，有方法名更为直观的反馈该方法的作用。 2. 可以复用对象，减少开支。比如单例模式。 3. 可以返回该类的任意子类。这是服务提供者框架的基础 这里展示一个服务提供者框架的Demo:    1234567891011121314151617181920212223242526272829303132333435363738/">
@@ -180,7 +181,7 @@
       </a>
     </div>
       
-        <p class="site-subtitle">进击的coder</p>
+        <p class="site-subtitle">报告老板，我要写bug</p>
       
   </div>
 
@@ -322,6 +323,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -373,6 +396,13 @@
 2. 禁止指令重排
 </code></pre><p><em>单元素枚举实现单例</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> enmu Singleton&#123;</div><div class="line">    Instance;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p><em>静态持有者</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span></span>&#123;</div><div class="line">		<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton SINGLETON = <span class="keyword">new</span> Singleton();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getSingleton</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> SingletonHolder.SINGLETON;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="通过私有化构造器强化类的不可实例化"><a href="#通过私有化构造器强化类的不可实例化" class="headerlink" title="通过私有化构造器强化类的不可实例化"></a>通过私有化构造器强化类的不可实例化</h2><p>有的时候，我们需要编写一些只包含静态方法与静态域的类的类，比如HttpclientUtils,jdk的Collections（通常为工具类）。这样的工具类是不希望被实例化的，因为实例化它们并没有什么意义。由于在缺省构造器的时候，编译器会为类提供一个默认的公有无参构造器，该默认构造器会造成无意识的实例化。为了确保类不可被实例化，只要给这个类一个显示的私有化的构造器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpclientUtils</span></span>&#123;</div><div class="line">    <span class="comment">//防止被实例化</span></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">HttpclientUtils</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError();</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注：这里不要用抽象类去实现不可实话的的功能，因为使用抽象类会给人一种客户端使用它应该去子例化该类，子例化之后又可以去实例化。这并不是一个好的解决。</p>
+<h2 id="避免创建不必要的对象"><a href="#避免创建不必要的对象" class="headerlink" title="避免创建不必要的对象"></a>避免创建不必要的对象</h2><p>一般来说，能重用对象就不要每次构建相同的对象，如果对象是不可变的，那么它始终可以被重用。<br>举一个反例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">String abc = <span class="keyword">new</span> String(<span class="string">"abc"</span>);</div><div class="line">```	</div><div class="line">每次运行这段代码的时候，abc都被赋值不同的内存地址。写代码的时候有些资源比较宝贵，开销比较大，可以抽取出来放在静态域中，通过静态代码块进行初始化。</div><div class="line">## 消除过期对象的引用 ##</div><div class="line">以下是一段存在内存泄漏的代码示例：</div><div class="line">```java</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Stack</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPABILITY = <span class="number">16</span>;</div><div class="line">    <span class="keyword">private</span> Object[] container = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Stack</span><span class="params">()</span></span>&#123;</div><div class="line">        container = <span class="keyword">new</span> Object[DEFAULT_CAPABILITY];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(Object object)</span></span>&#123;</div><div class="line">        ensureCapability();</div><div class="line">        container[size++] = object; </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">pop</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(size == <span class="number">0</span>)&#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> EmptyStackException();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> container[--size];</div><div class="line">    &#125; </div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ensureCapability</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(container.length == size)&#123;</div><div class="line">            container = Arrays.copyOf(container,<span class="number">2</span> * size + <span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> size;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这段代码是模拟了一个简单的栈，它的问题是当调用pop方法的时候，只是将内部的指针size变量减一，如果不再push对象的话，数组的大于size的部分对象引用永远无法被清除，而这些都是无效引用。基于此，对pop方法做出如下修改：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">pop</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">if</span>(size == <span class="number">0</span>)&#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> EmptyStackException();      </div><div class="line">    &#125;</div><div class="line">    Object object = container[--size];</div><div class="line">    container[size] = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">return</span> object;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>然而清空对象引用并不是一种规范，而是一种例外。在大多数时候我们都不需要手动清空对象引用，最好的清除过期引用的方法是，让包含对象引用的变量自己结束其生命周期。一般而言，只要类是自己管理内存的时候，程序员就要警惕内存泄漏的问题。</p>
+<h2 id="避免使用终结方法finalize"><a href="#避免使用终结方法finalize" class="headerlink" title="避免使用终结方法finalize()"></a>避免使用终结方法finalize()</h2><p>一个对象被GC，至少经历两次标记过程：当对象进行可达性分析发现其没有与GC Root相连接的引用链，即该对象不可达。对象会被第一次标记和筛选，其筛选的依据是，对象是否有必要执行finalize()方法。当对象没有重写finalize()方法或者重写并已执行过，被视为没有必要执行finalize()方法。<br>当对象被判定为有必要执行finalize()方法时，对象会被放入一个叫做F-Queue的队列中，由虚拟机自身维护的一个低优先级的线程Finzlizer将会执行F-Queue中对象的finalize()方法。然而这里的执行是指会去触发这个方法，而不承诺会等该方法执行完毕。这种做法的原因是，当一个对象的finalize()方法执行及其缓慢或者发生了死循环，将导致F-Queue中的其他对象永远处于等待状态，导致整个内存的回收系统都奔溃。finalize()方法是对象被回收的最后一次救赎，当finalize()方法中让对象自身与引用链建立连接，那么对象被在第二次标记时移除“即将回收”的集合中，而如果finalize()方法并没有让其与引用链建立联系，那么第二次标记之后对象就真的被回收了。<br>以下代码是对象通过finalize()方法“自救”的示例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalizeDemo</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> FinalizeDemo finalizeDemo= <span class="keyword">null</span>;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">finalize</span><span class="params">()</span></span>&#123;</div><div class="line">       finalizeDemo = <span class="keyword">this</span>;    </div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">isAlived</span><span class="params">()</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"yes i'm still alived"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">        finalizeDemo = <span class="keyword">new</span> FinalizeDemo();</div><div class="line">        finalizeDemo = <span class="keyword">null</span>;</div><div class="line">        System.gc();</div><div class="line">        <span class="comment">//Finalizer队列的优先级比较低，这里睡一会</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            TimeUnit.SECONDS.sleep(<span class="number">5</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(finalizeDemo == <span class="keyword">null</span>)&#123;</div><div class="line">            System.out.println(<span class="string">"i'am dead"</span>);</div><div class="line">        &#125; <span class="keyword">else</span>&#123;</div><div class="line">            finalizeDemo.isAlived();      </div><div class="line">        &#125;</div><div class="line">        <span class="comment">//这里重复以上代码</span></div><div class="line">        finalizeDemo = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            TimeUnit.SECONDS.sleep(<span class="number">5</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(finalizeDemo == <span class="keyword">null</span>)&#123;</div><div class="line">            System.out.println(<span class="string">"i'm dead"</span>);</div><div class="line">        &#125; <span class="keyword">else</span>&#123;</div><div class="line">            finalizeDemo.isAlived();      </div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以发现第一次对象执行了finalize方法自救成功，第二次finalize方法并不会再次执行了。以上只是展示其执行原理，在实际开发中应该去规避使用该方法，finalize方法能做的事，try-finally同样可以做而且做的更好。</p>
 
       
     </div>
@@ -387,6 +417,12 @@
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+        </div>
       
 
       
@@ -473,7 +509,25 @@
           
 
           
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
 
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
@@ -505,7 +559,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用静态工厂方法代替类的构造器"><span class="nav-number">1.</span> <span class="nav-text">使用静态工厂方法代替类的构造器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到构造器多个参数的时候优先使用构建器"><span class="nav-number">2.</span> <span class="nav-text">遇到构造器多个参数的时候优先使用构建器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例设计模式"><span class="nav-number">3.</span> <span class="nav-text">单例设计模式</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用静态工厂方法代替类的构造器"><span class="nav-number">1.</span> <span class="nav-text">使用静态工厂方法代替类的构造器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到构造器多个参数的时候优先使用构建器"><span class="nav-number">2.</span> <span class="nav-text">遇到构造器多个参数的时候优先使用构建器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例设计模式"><span class="nav-number">3.</span> <span class="nav-text">单例设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过私有化构造器强化类的不可实例化"><span class="nav-number">4.</span> <span class="nav-text">通过私有化构造器强化类的不可实例化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#避免创建不必要的对象"><span class="nav-number">5.</span> <span class="nav-text">避免创建不必要的对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#避免使用终结方法finalize"><span class="nav-number">6.</span> <span class="nav-text">避免使用终结方法finalize()</span></a></li></ol></div>
             
 
           </div>

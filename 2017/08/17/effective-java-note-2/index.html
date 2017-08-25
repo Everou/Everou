@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="读书笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="重写equals方法的时候遵守通用约定覆盖equals方法看似很简单但是实际许多覆盖方法会导致非常严重的后果，所以避免这种情况的最好方法就是不覆盖equals方法。这里有几个关于是否需要覆盖equals方法的准则：  类的实体本质都是唯一的。我们关注的并不是类的值而是类的实体本身，比如Thread类 不关注类是否逻辑相等。比如java.util.Random类，并不关注两个Random实例是否产生">
+<meta name="keywords" content="读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Effective Java读书笔记（二）">
+<meta property="og:url" content="https://everou.github.io/2017/08/17/effective-java-note-2/index.html">
+<meta property="og:site_name" content="Everou Blog">
+<meta property="og:description" content="重写equals方法的时候遵守通用约定覆盖equals方法看似很简单但是实际许多覆盖方法会导致非常严重的后果，所以避免这种情况的最好方法就是不覆盖equals方法。这里有几个关于是否需要覆盖equals方法的准则：  类的实体本质都是唯一的。我们关注的并不是类的值而是类的实体本身，比如Thread类 不关注类是否逻辑相等。比如java.util.Random类，并不关注两个Random实例是否产生">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-25T09:28:13.479Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Effective Java读书笔记（二）">
+<meta name="twitter:description" content="重写equals方法的时候遵守通用约定覆盖equals方法看似很简单但是实际许多覆盖方法会导致非常严重的后果，所以避免这种情况的最好方法就是不覆盖equals方法。这里有几个关于是否需要覆盖equals方法的准则：  类的实体本质都是唯一的。我们关注的并不是类的值而是类的实体本身，比如Thread类 不关注类是否逻辑相等。比如java.util.Random类，并不关注两个Random实例是否产生">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://everou.github.io/2017/08/17/effective-java-note-2/"/>
+
+
+
+
+
+  <title>Effective Java读书笔记（二） | Everou Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Everou Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">报告老板，我要写bug</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://everou.github.io/2017/08/17/effective-java-note-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Everou Bao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Everou Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Effective Java读书笔记（二）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-17T19:05:59+08:00">
+                2017-08-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="重写equals方法的时候遵守通用约定"><a href="#重写equals方法的时候遵守通用约定" class="headerlink" title="重写equals方法的时候遵守通用约定"></a>重写equals方法的时候遵守通用约定</h2><p>覆盖equals方法看似很简单但是实际许多覆盖方法会导致非常严重的后果，所以避免这种情况的最好方法就是不覆盖equals方法。这里有几个关于是否需要覆盖equals方法的准则：</p>
+<ul>
+<li>类的实体本质都是唯一的。我们关注的并不是类的值而是类的实体本身，比如Thread类</li>
+<li>不关注类是否逻辑相等。比如java.util.Random类，并不关注两个Random实例是否产生相同的随机序列</li>
+<li>超类已经覆盖了equals方法，并且符合自身的逻辑。</li>
+</ul>
+<p>而什么需要覆盖equals方法呢？对于类，更多关心的是类的某个属性也就是类的值，并且超类的equals方法并不适用，这样的类通常属于“值类”。比如说，Integer,Date这种，并不关心多个引用是否指向同一个对象。这种情况下，需要覆盖equals方法，使其符合需求。这里有一种例外，当“值类”属于实例受控，也就是同一个值最多有一个实例，对于这样的类并不需要覆盖他的equals方法，最为熟知的例子就是枚举类。</p>
+<p>覆盖equals方法时，需要遵守以下几个规范：</p>
+<ul>
+<li>自反性。即当不为null的情况下，a.equals(a)必须返回true;</li>
+<li>对称性。即当不为null的情况下，a.equals(b) == b.equals(a);</li>
+<li>传递性。即当不为null的情况下，a.equals(b)为true,b.equals(c)也为true,那么a.equals(c)也一定为true;</li>
+<li>一致性。即当不为null的引用a,b，如果a.equals(b)为true,只要a,b都没有发生更改，多次调用a.equals(b)依然为true;</li>
+<li>对于任意不为null的引用a,a.equals(null)都为false;</li>
+</ul>
+<p>这些规范中，像自反性与不为null相等的规范是很难去无意识的违反的，而对称性，传递性，一致性以下举例进行详细讲述。</p>
+<ul>
+<li>对称性</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CaseInsensitiveString</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> String a;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CaseInsensitiveString</span><span class="params">(String a)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(a == <span class="keyword">null</span>)&#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointException();</div><div class="line">        &#125;       </div><div class="line">        <span class="keyword">this</span>.a = a;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(obj <span class="keyword">instanceof</span> CaseInsensitive)&#123;</div><div class="line">            <span class="keyword">return</span> a.equalsIgnoreCase(((CaseInsensitive)obj).a);        </div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(obj <span class="keyword">instanceof</span> String)&#123;</div><div class="line">            <span class="keyword">return</span> a.equalsIgnoreCase((String)obj);</div><div class="line">        &#125; </div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里就存在一个问题，当String a = “123”; CaseInsensitiveString cs = new CaseInsensitiveString(“123”); cs.equals(a)位true,而a.equals(cs)为false;这里的equals改写，是想让本类与String发生关系，然而做的越多，出现问题的可能性就越大，a.equals(cs)时，并不会去调用CaseInsensitiveString的equals方法。这里修改equals方法为如下,并不与String发生关系。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>&#123;</div><div class="line">    <span class="keyword">return</span> obj <span class="keyword">instanceof</span> CaseInsensitiveString &amp;&amp; a.equals(((CaseInsensitiveString)obj).a);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>传递性</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> x;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> y;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Point</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.x = x;</div><div class="line">        <span class="keyword">this</span>.y = y;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(obj <span class="keyword">instanceof</span> Point)&#123;</div><div class="line">            Point point = (Point)obj;            </div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.x == point.x &amp;&amp; <span class="keyword">this</span>.y == point.y;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ColorPoint</span> <span class="keyword">extends</span> <span class="title">Point</span> </span>&#123;</div><div class="line">    <span class="comment">//Color为枚举类</span></div><div class="line">    <span class="keyword">private</span> Color color;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ColorPoint</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y,Color color)</span></span>&#123;</div><div class="line">        <span class="keyword">super</span>(x,y);</div><div class="line">        <span class="keyword">this</span>.color = color;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(obj <span class="keyword">instanceof</span> ColorPoint)&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.equals(obj) &amp;&amp; <span class="keyword">this</span>.color == obj.color; </div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Point p = <span class="keyword">new</span> Point(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line">ColorPoint c1 = <span class="keyword">new</span> ColorPoint(<span class="number">1</span>,<span class="number">1</span>,Color.BLUE);</div><div class="line">ColorPoint c1 = <span class="keyword">new</span> ColorPoint(<span class="number">1</span>,<span class="number">1</span>,Color.RED);</div></pre></td></tr></table></figure>
+<p>对于p,c1,c2，p.equals(c1)为true,p.equals(c2)为true,然而c1.equals(c2)为false,这显然违反传递性,并且p.equals(c1)位true,而c1.equals(p)却为false。然而这种情况，并没有一个非常好的解决方法：无法在拓展可实例化的类的同时，既增加组件，又遵守equals约定。这里有一种折中的方法，就是使用聚合替代继承，这也符合程序设计的理念，复合性优先于继承。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ColorPoint</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> Point point;</div><div class="line">    <span class="keyword">private</span> Color color;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ColorPoint</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y,Color color)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(color == <span class="keyword">null</span>)&#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointException();</div><div class="line">        &#125;</div><div class="line">        point = <span class="keyword">new</span> Point(x,y);</div><div class="line">        <span class="keyword">this</span>.color = color;        </div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> Point <span class="title">getPoint</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.point;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Color <span class="title">getColor</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.color;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(obj == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;    </div><div class="line">        <span class="keyword">if</span>(obj <span class="keyword">instanceof</span> ColorPoint)&#123;</div><div class="line">            ColorPoint cp = (ColorPoint)obj;</div><div class="line">            <span class="keyword">return</span> point.equals(cp.getPoint())&amp;&amp;color.equals(cp.getColor()) </div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在jdk中，java.sql.TimeStamp该类拓展了java.utils.Date类，增加了一个nano的字段，当TimeStamp与Date类同时使用一个Set,Map时就会出现问题，而单独则没有问题，这就是违反了equals方法的约定。如果是拓展抽象类则完全不会存在这样的问题。</p>
+<ul>
+<li>一致性</li>
+</ul>
+<p>一致性要求对象只有当对象发生改变，否则equals的结果一直不变。大多数类并不需要去注意一点，需要考虑的是是否需要将类的域设置成不可变的，此外在equals方法中不要依赖不可靠资源，比如java.net.URL,该equals方法会依赖URL中主机名IP比较，主机名依赖网络请求，随着时间的变化，其结果可能会出现变化。<br>对于equals方法的构建，还有以下一些技巧：</p>
+<ul>
+<li>使用”==”对对象的引用进行判断，看是否指向同一个对象。</li>
+<li>使用instanceof对类型进行判断，看是否属于同一个类型。</li>
+<li>将参数强转为具体的类型，因为上一步已经进行了instanceof判断，此步就可以直接强转。</li>
+<li>比较类的关键域进行判断，对于基本数据类型使用”==”，当然有精度的数据double,float则用Double.compare,Float.compare，对于对象则调用其equals方法。对于某些域其值为null也是合法的，那么可以这样判断<br><code>this.maybeNull == null?obj.maybeNull == null:this.maybeNull.equals(obj.maybeNull);</code>对其优化一下<br><code>(maybeNull == obj.maybeNull)||(maybeNull!=null&amp;&amp;maybeNull.equals(obj.maybeNull));</code>这种方式更快。</li>
+</ul>
+<p>此外对于equals方法的书写还有一些告诫：</p>
+<ul>
+<li>当覆盖equals方法的时候，总是要覆盖hashCode方法。</li>
+<li>不要讲equals方法设计的太过智能。过智能判断会带来更多可能的bug,之前CaseInsensitiveString类中的equals方法试图与String建立关系，结果不满足对称性。</li>
+<li>equals方法的参数为Object,这里是去重写从Object类继承的equals方法，而不是自己写一个equals方法去重载。</li>
+</ul>
+<h2 id="覆盖equals方法时总是覆盖hashCode方法"><a href="#覆盖equals方法时总是覆盖hashCode方法" class="headerlink" title="覆盖equals方法时总是覆盖hashCode方法"></a>覆盖equals方法时总是覆盖hashCode方法</h2><p>当类覆盖equals方法，而不覆盖hashCode方法的时候，将无法使用使用基于散列的集合，包括HashMap,HashTable,HashSet。所以，当覆盖equals方法的时候，必定要去覆盖hashCode方法。与equals方法一样，hashCode的也有这样几条约定：</p>
+<ul>
+<li>在程序运行过程中，只要对象的equals方法相关的域没有发生变化，那么其hashCode方法始终返回一致的整数。程序的多次运行，可以返回不一致的结果。</li>
+<li>如果两个对象equals判断为true,那么其hashCode一定相同。</li>
+<li>如果两个对象equals方法为false，那么其hashCode不一定不同。但是，返回不同的hashCode有可能提高散列表的性能。</li>
+</ul>
+<p>重写equals方法不重写hashCode方法也违反了第二条规定，在Object类中equals方法是比较其引用地址，其hashCode方法是返回基于内存地址的int值。一个好的hashCode方法可以很大程度上提升基于散列的集合，这里举一个反例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">42</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样的hashCode是合法的，但也是极其恶劣的。它会导致所有的对象放置在同一个bucket中，这样散列表完全退化成链表。这也是约定中所倾向的，equals方法比较不相同的对象，返回截然不同的int值。如何写好hashCode方法，有如下所示的经验总结：</p>
+<ul>
+<li>总体上求值公式为：<code>hashCode = 31 * result + c;</code></li>
+<li>result赋一个默认值，比如17</li>
+<li>c的计算公式为<ol>
+<li>boolean值,<code>field?1:0;</code></li>
+<li>byte,char,short,int则计算<code>(int)field;</code></li>
+<li>long, <code>(int)(long^(long&gt;&gt;&gt;32))</code>,^运算符是亦或，位运算的时候相同为0，不同为1，&gt;&gt;&gt;为无符号右移</li>
+<li>float,<code>Float.floatToIntBits(field);</code></li>
+<li>double,<code>Double.doubleToLongBits(field)</code>,再按3中long的计算方法再计算一次</li>
+<li>对象，如果该域在equals方法的计算是递归调用该对象的equals方法的话，那么也递归调用其hashCode方法</li>
+<li>数组，将数组中每一个元素当成单独的域进行计算，可以使用Arrays.hashCode来计算</li>
+</ol>
+</li>
+</ul>
+<p>在散列码的计算过程中，是需要冗余域排除在外的，冗余域即通过其他的域可以计算得出的，同时必须排除equals方法所不包含的域。在上述的经验总结给出的公式<code>31 * result + c</code>，result给17这样一个初始值是因为，如果不给定初始值，对象hashCode为0的域就不会影响整个的hashCode，会增加hash冲突的可能，17是任选的，非零即可。公式中乘法是用来确定域顺序，像String类，”123”与”321”，显然这两个的hashCode相同，而不使用乘法的话则会出现hashCode相同的情况。至于这个因子挑选，一般是使用奇素数，因为使用偶数，乘法溢出，数据容易丢失，与2相乘等价于左移运算。使用素数的好处并不明显。至于乘以31有个好处：<code>i * 31 == (i&lt;&lt;5) - i;</code>现在的jvm直接可以完成这样的优化。</p>
+<h2 id="总是覆盖toString方法"><a href="#总是覆盖toString方法" class="headerlink" title="总是覆盖toString方法"></a>总是覆盖toString方法</h2><p>Object自带的toString方法是返回<code>类名@内存地址的hashCode转成16进制表示</code>，这与约定的“简单，但信息充足，并且易于阅读的表达形式”并不符合，所以当创建一个类的时候，建议总是要去覆盖它的toString，然而只是一个建议。相比于equals和hashCode约定的重要，toString只是在调用类似printf等打印及诊断时带来方便。值得一提的是，当对一些值类进行toString的时候，需要考虑是否约定其格式，如果约定了格式，那么就要考虑在类中增加一个构造方法或静态工厂方法来建立与约定格式的String相互转换。</p>
+<h2 id="谨慎覆盖clone方法"><a href="#谨慎覆盖clone方法" class="headerlink" title="谨慎覆盖clone方法"></a>谨慎覆盖clone方法</h2><p>clone方法的约定如下：</p>
+<ul>
+<li><code>x.clone() != x</code>为true,<code>x.clone().getClass() == x.getClass()</code>为true，通常表达为<code>x.equals(x.clone())</code>为true，但是这些都不是绝对的，拷贝对象往往会创建一个新的对象，同时copy源对象的域，这个过程中不能使用类的构造器。</li>
+</ul>
+<p>这个约定存在几个问题，对于x.clone().getClass() == x.getClass()通常为true，这个约定太软。而clone的过程不能调用构造器有太硬。这也导致部分final修饰的域无法与clone方法兼容，对于覆盖clone方法通常是这样做的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> String location;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">clone</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">try</span>&#123;        </div><div class="line">            <span class="keyword">return</span> (Person)<span class="keyword">super</span>.clone();</div><div class="line">        <span class="keyword">catch</span>(CloneNotSupportedException e)&#123;</div><div class="line">            ...</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里返回Person是从jdk1.5开始支持的可协变返回类型，即重写父类的方法，返回的类型可以是父类返回类型的子类。对于客户端需要使用的clone方法，将异常捕获，并将权限设为public，而一些类的clone方法设计给子类调用那么依然设置为protect，依然在方法申明异常。<br>这里的clone方法是浅复制，当对象的域为引用变量的时候，这样的clone可能会带来严重的后果。比如上一篇的Stack类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Stack</span></span>&#123;</div><div class="line">    <span class="keyword">private</span> Object[] elements;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INTI_CAPABILITY = <span class="number">16</span>;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Stack</span><span class="params">()</span></span>&#123;</div><div class="line">        elements = <span class="keyword">new</span> Object[DEFAULT_INIT_CAPABILITY];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">pop</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(size == <span class="number">0</span>) &#123;</div><div class="line">            <span class="function">thows new <span class="title">NullPointException</span><span class="params">()</span></span>;</div><div class="line">        &#125;</div><div class="line">        Object obj = elements[--size];</div><div class="line">        element[size] == <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">return</span> obj;        </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(Object obj)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(size == DEFAULT_INIT_CAPABILITY) &#123;</div><div class="line">            elements = Arrays.copyOf(elements,<span class="number">2</span>*DEFAULT_INIT_CAPABILITY+<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">        elements[size++] = obj;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>进行上述的clone方法，clone出的新对象其elements引用所指向的就是初始对象的elements,即<code>stack1 = stack.clone();stack1.elements == stack.elements</code>,那么clone来的对象与原对象的使用就会相互冲突。这里就要进行深复制：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Stack <span class="title">clone</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">try</span>&#123;</div><div class="line">        Stack stack = (Stack)<span class="keyword">super</span>.clone();</div><div class="line">        stack.elements = elements.clone();</div><div class="line">        <span class="keyword">return</span> stack;</div><div class="line">    &#125;<span class="keyword">catch</span> (CloneNotSupportedException e)&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/16/effective-java-review-1/" rel="next" title="Effective Java总结（一）">
+                <i class="fa fa-chevron-left"></i> Effective Java总结（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Everou Bao" />
+          <p class="site-author-name" itemprop="name">Everou Bao</p>
+           
+              <p class="site-description motion-element" itemprop="description">进击的coder</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#重写equals方法的时候遵守通用约定"><span class="nav-number">1.</span> <span class="nav-text">重写equals方法的时候遵守通用约定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#覆盖equals方法时总是覆盖hashCode方法"><span class="nav-number">2.</span> <span class="nav-text">覆盖equals方法时总是覆盖hashCode方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总是覆盖toString方法"><span class="nav-number">3.</span> <span class="nav-text">总是覆盖toString方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#谨慎覆盖clone方法"><span class="nav-number">4.</span> <span class="nav-text">谨慎覆盖clone方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Everou Bao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
